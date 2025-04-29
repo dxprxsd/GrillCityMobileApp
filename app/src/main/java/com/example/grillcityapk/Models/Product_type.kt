@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @SerialName("product_type")
 data class Product_type(
     @SerialName("id") val id: Int,
-    @SerialName("type_name") val type_name: String?
+    @SerialName("typeName") val typeName: String?
 )

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -59,6 +60,10 @@ import com.example.grillcityapk.MainViewModel
 import com.example.grillcityapk.Models.Products
 import com.example.grillcityapk.R
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.collectAsState
 
 
@@ -72,7 +77,7 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
     val haircutsTypes by viewModel.haircutstypes.collectAsState()
 
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf("Все прически") }
+    var selectedItem by remember { mutableStateOf("Все типы") }
     var selectedType by remember { mutableStateOf<Int?>(null) }
 
     // Fetch products and types
@@ -129,14 +134,15 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFC21631), RoundedCornerShape(12.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .widthIn(max = 180.dp), // Установка максимальной ширины
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextField(
                         value = viewModel.searchQuery.value,
                         onValueChange = {
                             viewModel.searchQuery.value = it
-                            viewModel.filteredHaircutMethod()
+                            viewModel.filteredHaircutMethod() // Передаём текущий selectedType
                         },
                         placeholder = { Text("Поиск") },
                         modifier = Modifier
@@ -161,7 +167,7 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                     Button(
                         onClick = { expanded = !expanded },
                         modifier = Modifier
-                            .width(120.dp)
+                            .width(150.dp)
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE8E8E8)),
                         shape = RoundedCornerShape(12.dp)
@@ -174,16 +180,24 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                         onDismissRequest = { expanded = false },
                         modifier = Modifier.width(200.dp)
                     ) {
+                        // Добавляем пункт "Все товары" в выпадающий список
+                        DropdownMenuItem(
+                            text = { Text("Все типы") },
+                            onClick = {
+                                selectedItem = "Все типы"
+                                viewModel.setSelectedType(null)
+                                expanded = false
+                            }
+                        )
+
                         haircutsTypes.forEach { type ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = type.type_name.toString(), fontSize = 15.sp)
+                                    Text(text = type.typeName.toString(), fontSize = 15.sp)
                                 },
                                 onClick = {
-                                    selectedItem = type.type_name.toString()
-                                    selectedType = type.id
-                                    viewModel.typeOfReadyClothes = selectedType
-                                    viewModel.filteredHaircutMethod()  // Apply type-based filter
+                                    selectedItem = type.typeName.toString()
+                                    viewModel.setSelectedType(type.id)
                                     expanded = false
                                 }
                             )
@@ -233,7 +247,7 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                                     ) {
                                         val photoUrl = rememberAsyncImagePainter(
                                             model = ImageRequest.Builder(LocalContext.current)
-                                                .data(product.photo ?: "")
+                                                .data(product.Photo ?: "")
                                                 .size(100, 100)
                                                 .build()
                                         ).state
@@ -272,7 +286,7 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                                         modifier = Modifier.fillMaxHeight()
                                     ) {
                                         Text(
-                                            text = product.product_name ?: "Без названия",
+                                            text = product.ProductName ?: "Без названия",
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold,
                                             maxLines = 1,
@@ -280,12 +294,12 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                                         )
 
                                         Text(
-                                            text = "Кол-во: ${product.quantity_in_stock ?: 0}",
+                                            text = "Кол-во: ${product.QuantityInStock ?: 0}",
                                             fontSize = 14.sp
                                         )
 
                                         Text(
-                                            text = "${product.price ?: 0.0} ₽",
+                                            text = "${product.Price ?: 0.0} ₽",
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFFC21631)

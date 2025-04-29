@@ -26,41 +26,13 @@ class MainViewModel : ViewModel() {
     var authResult = mutableStateOf("")
     private val _authResult = MutableLiveData<Boolean>()
 
+    // Подключение ApiService
+    private val apiService = RetrofitClient.apiService
+
     //uid текущего пользователя
     var currentUserUid = mutableStateOf<String?>(null)
 
     var profileCreated = mutableStateOf(false)
-
-//    private val _products = mutableStateListOf<Products>()
-//    val products: List<Products> get() = _products
-
-//    private val _isLoading = mutableStateOf(false)
-//    val isLoading: State<Boolean> get() = _isLoading
-
-//    //Функция для входа в приложении
-//    fun onSignInEmailPassword(emailUser: String, passwordUser: String) {
-//        viewModelScope.launch {
-//            try {
-//                // Вход пользователя
-//                val user = Constants.supabase.auth.signInWith(Email) {
-//                    email = emailUser
-//                    password = passwordUser
-//                }
-//
-//                // Сохранение ID текущего пользователя
-//                currentUserUid.value = Constants.supabase.auth.currentUserOrNull()?.id
-//
-//                println("Current user uid: $currentUserUid")
-//
-//                println("Success")
-//                authResult.value = "Success" // Устанавливаем успешный результат
-//            } catch (e: Exception) {
-//                println("Error")
-//                authResult.value = "Error" // Устанавливаем ошибочный результат
-//                println(e.message.toString())
-//            }
-//        }
-//    }
 
     fun onSignInEmailPassword(emailUser: String, passwordUser: String) {
         viewModelScope.launch {
@@ -85,47 +57,6 @@ class MainViewModel : ViewModel() {
             }
         }
     }
-
-//    fun loadProducts(typeId: Int? = null) {
-//        viewModelScope.launch {
-//            _isLoading.value = true
-//            try {
-//                val response = RetrofitClient.apiService.getProducts(typeId)
-//                _products.clear()
-//                _products.addAll(response)
-//            } catch (e: Exception) {
-//                Log.e("MainViewModel", "Error loading products", e)
-//            } finally {
-//                _isLoading.value = false
-//            }
-//        }
-//    }
-
-
-//    //Функция для регистрации в приложении
-//    fun onSignUpEmailPassword(emailUser: String, passwordUser: String) {
-//        viewModelScope.launch {
-//            try {
-//                // Регистрация пользователя
-//                val user = Constants.supabase.auth.signUpWith(Email) {
-//                    email = emailUser
-//                    password = passwordUser
-//                }
-//
-//                // Сохранение ID текущего пользователя после успешной регистрации
-//                currentUserUid.value = Constants.supabase.auth.currentUserOrNull()?.id
-//
-//                println("Current user uid: $currentUserUid")
-//
-//                println("Registration Success")
-//                authResult.value = "Registration Success"
-//            } catch (e: Exception) {
-//                println("Registration Error")
-//                authResult.value = "Registration Error"
-//                println(e.message.toString())
-//            }
-//        }
-//    }
 
     private val _products = mutableStateOf<List<Products>>(emptyList())
     val products: State<List<Products>> = _products
@@ -159,26 +90,41 @@ class MainViewModel : ViewModel() {
     private val _hairtypes = MutableStateFlow<List<Product_type>>(emptyList())
     val haircutstypes: StateFlow<List<Product_type>> = _hairtypes.asStateFlow()
 
-    // Подключение ApiService
-    private val apiService = RetrofitClient.apiService
+    private val _selectedType = mutableStateOf<Int?>(null)
+    val selectedType: State<Int?> get() = _selectedType
 
-    // Метод фильтрации
-    fun filteredHaircutMethod() {
-        _filteredHaircuts.value = _rmhaircuts.value
+    // Метод фильтрации (исправленный)
+    internal fun filteredHaircutMethod() {
+        // Фильтруем сначала по поиску, затем по типу
+        var result = _rmhaircuts.value
 
+        // Применяем поисковый фильтр
         if (searchQuery.value.isNotEmpty()) {
-            _filteredHaircuts.value = _filteredHaircuts.value.filter {
-                it.product_name.lowercase(Locale.getDefault())
-                    .contains(searchQuery.value.lowercase(Locale.getDefault()))
+            result = result.filter {
+                it.ProductName.contains(searchQuery.value, ignoreCase = true)
             }
         }
+
+        // Применяем фильтр по типу (если typeOfReadyClothes установлен)
+        typeOfReadyClothes?.let { typeId ->
+            result = result.filter { it.ProductTypeId == typeId }
+        }
+
+        _filteredHaircuts.value = result
+    }
+
+
+    // Установка типа для фильтрации
+    fun setSelectedType(typeId: Int?) {
+        typeOfReadyClothes = typeId
+        filteredHaircutMethod()
     }
 
     // Получение товаров с фильтрацией по типу
     fun fetchHaircuts() {
         viewModelScope.launch {
             try {
-                val fetchedProducts = apiService.getProducts(typeOfReadyClothes)
+                val fetchedProducts = apiService.getProducts()
                 _rmhaircuts.value = fetchedProducts
                 filteredHaircutMethod()
             } catch (e: Exception) {
