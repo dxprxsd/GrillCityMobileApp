@@ -4,13 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("products")
 data class Products(
-    @SerialName("id") val id: Int,
-    @SerialName("product_name") val product_name: String,
-    @SerialName("product_type_id") val product_type_id: Int?,
-    @SerialName("provider_id") val provider_id: Int?,
-    @SerialName("photo") val photo: String? = null,
-    @SerialName("quantity_in_stock") val quantity_in_stock: Int,
-    @SerialName("price") val price: Float
+    @SerialName("Id") val id: Int,
+    @SerialName("ProductName") val product_name: String,
+    @SerialName("ProductTypeId") val product_type_id: Int?,
+    @SerialName("ProviderId") val provider_id: Int?,
+    @SerialName("Photo") val photo: String? = null,
+    @SerialName("QuantityInStock") val quantity_in_stock: Int,
+    @SerialName("Price") val price: Float
 )
