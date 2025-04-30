@@ -6,6 +6,8 @@ plugins {
     kotlin("plugin.serialization") version "1.9.22"
 
     alias(libs.plugins.compose.compiler)
+
+
 }
 
 android {
@@ -102,4 +104,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
 }

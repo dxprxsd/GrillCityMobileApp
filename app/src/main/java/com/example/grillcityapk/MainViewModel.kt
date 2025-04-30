@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
+import androidx.compose.foundation.lazy.items
+import kotlinx.coroutines.flow.update
 
 class MainViewModel : ViewModel() {
     //переменная для результата входа и регистрации
@@ -143,5 +145,29 @@ class MainViewModel : ViewModel() {
                 Log.e("MainViewModel", "Ошибка загрузки типов товаров: ${e.message}")
             }
         }
+    }
+
+    // Корзина
+    private val _cartItems = MutableStateFlow<List<Products>>(emptyList())
+    val cartItems: StateFlow<List<Products>> = _cartItems.asStateFlow()
+
+    // Для добавления товара
+    fun addToCart(product: Products) {
+        _cartItems.update { current ->
+            if (current.any { it.Id == product.Id }) current
+            else current + product
+        }
+    }
+
+    // Для удаления товара
+    fun removeFromCart(product: Products) {
+        _cartItems.update { currentItems ->
+            currentItems.filterNot { it.Id == product.Id }
+        }
+    }
+
+    // Для подсчета суммы
+    fun getCartTotal(): Float {
+        return _cartItems.value.sumOf { it.Price.toDouble() }.toFloat()
     }
 }

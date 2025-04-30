@@ -61,10 +61,14 @@ import com.example.grillcityapk.Models.Products
 import com.example.grillcityapk.R
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.collectAsState
+import androidx.navigation.NavController
 
 
 @SuppressLint("UnrememberedMutableState")
@@ -122,6 +126,7 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .weight(1f)
                 .background(Color(0xFFE8E8E8), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
         ) {
             Column(
@@ -304,12 +309,80 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFFC21631)
                                         )
+                                        // Кнопка добавления в корзину
+                                        IconButton(
+                                            onClick = {
+                                                viewModel.addToCart(product)
+                                                println("Текущее состояние корзины: ${viewModel.cartItems.value}")
+                                                println("Добавленный товар: ${product.ProductName}") // Логирование
+                                            },
+                                            modifier = Modifier.size(48.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Add,
+                                                contentDescription = "Add to cart",
+                                                tint = Color(0xFFC21631),
+                                                modifier = Modifier.size(30.dp)
+                                            )
+                                        }
+
+                                        // Добавляем Spacer, чтобы контент не перекрывался нижней панелью
+                                        Spacer(modifier = Modifier.weight(1f))
+
+                                        // Нижняя панель навигации
+                                        BottomNavigationBar(navController)
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+        BottomNavigationBar(navController)
+    }
+}
+
+
+@Composable
+fun BottomNavigationBar(navController: NavController) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(Color(0xFFC21631)),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Кнопка главной страницы
+        IconButton(
+            onClick = { navController.navigate("main_screen") },
+            modifier = Modifier.weight(1f)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Главная",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text("Главная", color = Color.White, fontSize = 12.sp)
+            }
+        }
+
+        // Кнопка корзины
+        IconButton(
+            onClick = { navController.navigate("cart_screen") },
+            modifier = Modifier.weight(1f)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = "Корзина",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text("Корзина", color = Color.White, fontSize = 12.sp)
             }
         }
     }

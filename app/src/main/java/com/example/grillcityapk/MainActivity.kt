@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.grillcityapk.Screens.CartScreen
 import com.example.grillcityapk.Screens.LoadScreen
 import com.example.grillcityapk.Screens.MainScreen
 import com.example.grillcityapk.Screens.LoginScreen
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GrillCityApkTheme {
-                //val viewModel = MainViewModel()
+                val viewModel: MainViewModel = viewModel()
                 val navController = rememberNavController()
 
                 NavHost(
@@ -31,12 +32,13 @@ class MainActivity : ComponentActivity() {
                         LoadScreen(navController)
                     }
                     composable("main_screen") {
-                        val viewModel: MainViewModel = viewModel()
                         MainScreen(navController = navController, viewModel = viewModel)
                     }
                     composable("login_screen") {
-                        val viewModel: MainViewModel = viewModel()
                         LoginScreen(navController = navController, viewModel = viewModel)
+                    }
+                    composable("cart_screen") {
+                        CartScreen(navController = navController, viewModel = viewModel)
                     }
                 }
             }
