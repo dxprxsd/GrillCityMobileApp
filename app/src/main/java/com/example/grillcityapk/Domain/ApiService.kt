@@ -1,5 +1,7 @@
 package com.example.grillcityapk.Domain
 
+import com.example.grillcityapk.Models.CreateMobileOrderRequest
+import com.example.grillcityapk.Models.CreateMobileOrderResponse
 import com.example.grillcityapk.Models.CreateOrderResponse
 import com.example.grillcityapk.Models.LoginResponse
 import com.example.grillcityapk.Models.Orders
@@ -31,4 +33,11 @@ interface ApiService {
 
     @GET("orders")
     suspend fun getOrders(): List<Orders>
+
+
+    @POST("CreateMobileOrder")
+    suspend fun createMobileOrder(
+        @Body request: CreateMobileOrderRequest
+    ): CreateMobileOrderResponse
+
 }

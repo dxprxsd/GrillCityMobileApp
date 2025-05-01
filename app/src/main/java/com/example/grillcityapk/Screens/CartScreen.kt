@@ -1,5 +1,6 @@
 package com.example.grillcityapk.Screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -44,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import coil.compose.AsyncImage
@@ -53,6 +56,8 @@ import com.example.grillcityapk.R
 @Composable
 fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
     val cartItems by viewModel.cartItems.collectAsState()
+    val context = LocalContext.current
+    val clientId = viewModel.currentClientId
 
     Column(
         modifier = Modifier.fillMaxSize().padding(WindowInsets.statusBars.asPaddingValues())
@@ -134,7 +139,23 @@ fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
                             fontWeight = FontWeight.Bold
                         )
                         Button(
-                            onClick = { /* Оформление заказа */ },
+                            onClick = {
+                                if (clientId != null) {
+                                    viewModel.createMobileOrder(
+                                        clientId = clientId,
+                                        discountId = null
+                                    ) { success, message ->
+                                        if (success) {
+                                            Toast.makeText(context, "Заказ оформлен!", Toast.LENGTH_LONG).show()
+                                        } else {
+                                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Для оформления войдите в систему", Toast.LENGTH_LONG).show()
+                                    navController.navigate("login")
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFC21631)
                             )

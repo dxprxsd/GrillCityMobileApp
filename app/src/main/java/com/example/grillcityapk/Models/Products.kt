@@ -11,5 +11,6 @@ data class Products(
     @SerialName("ProviderId") val ProviderId: Int?,
     @SerialName("Photo") val Photo: String? = null,
     @SerialName("QuantityInStock") val QuantityInStock: Int,
-    @SerialName("Price") val Price: Float
+    @SerialName("Price") val Price: Float,
+    var QuantityInCart: Int = 1 // Добавляем поле для хранения количества
 )

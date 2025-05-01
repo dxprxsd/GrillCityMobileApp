@@ -10,4 +10,5 @@ object HttpRoutes {
     const val PROVIDERS = "$BASE_URL/providers"
     const val PRODUCT_TYPES = "$BASE_URL/producttypes"
     const val ORDER_HISTORY = "$BASE_URL/orders/history"
+    const val CREATE_MOBILE_ORDER = "$BASE_URL/CreateMobileOrder"
 }

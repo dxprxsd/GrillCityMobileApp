@@ -3,7 +3,6 @@ package com.example.grillcityapk
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
@@ -12,21 +11,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.grillcityapk.Domain.RetrofitClient
 import com.example.grillcityapk.Models.Product_type
 import com.example.grillcityapk.Models.Products
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Locale
-import androidx.compose.foundation.lazy.items
+import com.example.grillcityapk.Models.CreateMobileOrderRequest
 import kotlinx.coroutines.flow.update
 
-class MainViewModel : ViewModel() {
+class MainViewModel() : ViewModel() {
     //переменная для результата входа и регистрации
     var authResult = mutableStateOf("")
     private val _authResult = MutableLiveData<Boolean>()
+
+    var currentClientId by mutableStateOf<Int?>(null)
+        private set
+
 
     // Подключение ApiService
     private val apiService = RetrofitClient.apiService
@@ -48,6 +47,7 @@ class MainViewModel : ViewModel() {
                 if (response.userId != null) {
                     println("Login successful! UserId: ${response.userId}")
                     currentUserUid.value = response.userId.toString()
+                    currentClientId = response.userId  // сохранить ID клиента
                     authResult.value = "Success"
                 } else {
                     println("Login failed: ${response.message ?: "No message"}")
@@ -151,13 +151,42 @@ class MainViewModel : ViewModel() {
     private val _cartItems = MutableStateFlow<List<Products>>(emptyList())
     val cartItems: StateFlow<List<Products>> = _cartItems.asStateFlow()
 
-    // Для добавления товара
+//    // Для добавления товара
+//    fun addToCart(product: Products) {
+//        _cartItems.update { current ->
+//            if (current.any { it.Id == product.Id }) current
+//            else current + product
+//        }
+//    }
+
     fun addToCart(product: Products) {
         _cartItems.update { current ->
-            if (current.any { it.Id == product.Id }) current
-            else current + product
+            val existing = current.find { it.Id == product.Id }
+            if (existing != null) {
+                current.map {
+                    if (it.Id == product.Id)
+                        it.copy(QuantityInCart = it.QuantityInCart + 1)
+                    else it
+                }
+            } else {
+                current + product.copy(QuantityInCart = 1)
+            }
         }
     }
+
+    fun decreaseQuantity(product: Products) {
+        _cartItems.update { current ->
+            current.flatMap {
+                if (it.Id == product.Id) {
+                    if (it.QuantityInCart > 1)
+                        listOf(it.copy(QuantityInCart = it.QuantityInCart - 1))
+                    else emptyList() // удалить, если количество стало 0
+                } else listOf(it)
+            }
+        }
+    }
+
+
 
     // Для удаления товара
     fun removeFromCart(product: Products) {
@@ -168,6 +197,46 @@ class MainViewModel : ViewModel() {
 
     // Для подсчета суммы
     fun getCartTotal(): Float {
-        return _cartItems.value.sumOf { it.Price.toDouble() }.toFloat()
+        return _cartItems.value.sumOf { it.Price.toDouble() * it.QuantityInCart }.toFloat()
     }
+
+
+    fun createMobileOrder(clientId: Int, discountId: Int?, onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                // Преобразуем корзину в формат для API
+                val productMap = _cartItems.value.associate { it.Id to it.QuantityInCart }
+
+                if (productMap.isEmpty()) {
+                    onResult(false, "Корзина пуста")
+                    return@launch
+                }
+
+                // Создаем запрос
+                val request = CreateMobileOrderRequest(
+                    clientId = clientId,
+                    products = productMap, // Уже содержит Int ключи
+                    discountId = discountId
+                )
+
+                val response = apiService.createMobileOrder(request)
+
+                // Очищаем корзину после успешного заказа
+                _cartItems.value = emptyList()
+
+                val resultMsg = buildString {
+                    appendLine("Заказ №${response.orderId} успешно оформлен!")
+                    appendLine("Код: ${response.code}")
+                    appendLine("Сумма: ${response.totalPrice} ₽")
+                    appendLine("Дата: ${response.orderDate}")
+                }
+
+                onResult(true, resultMsg)
+            } catch (e: Exception) {
+                onResult(false, "Ошибка при оформлении заказа: ${e.localizedMessage}")
+            }
+        }
+    }
+
+
 }
