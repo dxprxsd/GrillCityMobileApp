@@ -1,5 +1,6 @@
 package com.example.grillcityapk
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.grillcityapk.Models.CreateMobileOrderRequest
+import com.example.grillcityapk.Models.OrderResponse
+import com.example.grillcityapk.Models.Users
 import kotlinx.coroutines.flow.update
 
 class MainViewModel() : ViewModel() {
@@ -174,14 +177,32 @@ class MainViewModel() : ViewModel() {
         }
     }
 
+    // Увеличить количество товара
+    fun increaseQuantity(product: Products) {
+        _cartItems.update { current ->
+            current.map {
+                if (it.Id == product.Id) {
+                    it.copy(QuantityInCart = it.QuantityInCart + 1)
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
+    // Уменьшить количество товара (удалить если количество <= 1)
     fun decreaseQuantity(product: Products) {
         _cartItems.update { current ->
             current.flatMap {
                 if (it.Id == product.Id) {
-                    if (it.QuantityInCart > 1)
+                    if (it.QuantityInCart > 1) {
                         listOf(it.copy(QuantityInCart = it.QuantityInCart - 1))
-                    else emptyList() // удалить, если количество стало 0
-                } else listOf(it)
+                    } else {
+                        emptyList() // удаляем если количество стало 0
+                    }
+                } else {
+                    listOf(it)
+                }
             }
         }
     }
@@ -237,6 +258,32 @@ class MainViewModel() : ViewModel() {
             }
         }
     }
+
+    private val _currentUser = MutableStateFlow<Users?>(null)
+    val currentUser: StateFlow<Users?> = _currentUser.asStateFlow()
+
+    private val _userOrders = MutableStateFlow<List<OrderResponse>>(emptyList())
+    val userOrders: StateFlow<List<OrderResponse>> = _userOrders.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    fun fetchUserOrders(userId: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = apiService.getUserOrders(userId)
+                _userOrders.value = response
+            } catch (e: Exception) {
+                Log.e("UserScreen", "Error fetching orders", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+
+
 
 
 }

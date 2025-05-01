@@ -3,6 +3,7 @@ package com.example.grillcityapk.Screens
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,10 @@ import com.example.grillcityapk.MainViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -121,7 +126,9 @@ fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
                         items(cartItems) { product ->
                             CartItemCard(
                                 product = product,
-                                onRemove = { viewModel.removeFromCart(it) }
+                                onRemove = { viewModel.removeFromCart(it) },
+                                onIncrease = { viewModel.increaseQuantity(it) },
+                                onDecrease = { viewModel.decreaseQuantity(it) }
                             )
                         }
                     }
@@ -174,8 +181,10 @@ fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
 
 @Composable
 fun CartItemCard(
-    product: Products,  // Обязательный параметр
-    onRemove: (Products) -> Unit
+    product: Products,
+    onRemove: (Products) -> Unit,
+    onIncrease: (Products) -> Unit,
+    onDecrease: (Products) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -188,23 +197,82 @@ fun CartItemCard(
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Изображение товара
-            AsyncImage(
-                model = product.Photo ?: "",
-                contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                contentScale = ContentScale.Crop
-            )
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .border(1.dp, Color(0xFFC21631), RoundedCornerShape(8.dp))
+                    .padding(2.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                val context = LocalContext.current
+                val imageRes = remember(product.Photo) {
+                    try {
+                        product.Photo?.substringBeforeLast(".")?.let { name ->
+                            context.resources.getIdentifier(name, "drawable", context.packageName)
+                        } ?: R.drawable.imagezaglushka
+                    } catch (e: Exception) {
+                        R.drawable.imagezaglushka
+                    }
+                }
+
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = product.ProductName,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Информация о товаре
+            // Информация о товаре и кнопки количества
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = product.ProductName ?: "Без названия",
                     fontWeight = FontWeight.Bold
                 )
                 Text("${product.Price} ₽")
+
+                // Строка с кнопками количества
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    // Кнопка уменьшения количества
+                    IconButton(
+                        onClick = { onDecrease(product) },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.minus),
+                            contentDescription = "Уменьшить количество",
+                            modifier = Modifier.size(18.dp),
+                            colorFilter = ColorFilter.tint(Color(0xFFC21631))
+                        )
+                    }
+
+                    // Отображение текущего количества
+                    Text(
+                        text = "${product.QuantityInCart}",
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        fontSize = 16.sp
+                    )
+
+                    // Кнопка увеличения количества
+                    IconButton(
+                        onClick = { onIncrease(product) },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.plus),
+                            contentDescription = "Увеличить количество",
+                            modifier = Modifier.size(18.dp),
+                            colorFilter = ColorFilter.tint(Color(0xFFC21631))
+                        )
+                    }
+                }
             }
 
             // Кнопка удаления

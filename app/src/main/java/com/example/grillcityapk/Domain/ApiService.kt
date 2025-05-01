@@ -4,6 +4,7 @@ import com.example.grillcityapk.Models.CreateMobileOrderRequest
 import com.example.grillcityapk.Models.CreateMobileOrderResponse
 import com.example.grillcityapk.Models.CreateOrderResponse
 import com.example.grillcityapk.Models.LoginResponse
+import com.example.grillcityapk.Models.OrderResponse
 import com.example.grillcityapk.Models.Orders
 import com.example.grillcityapk.Models.Product_type
 import com.example.grillcityapk.Models.Products
@@ -40,4 +41,6 @@ interface ApiService {
         @Body request: CreateMobileOrderRequest
     ): CreateMobileOrderResponse
 
+    @GET("ordersByUser")
+    suspend fun getUserOrders(@Query("userId") userId: Int): List<OrderResponse>
 }

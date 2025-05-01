@@ -1,6 +1,8 @@
 package com.example.grillcityapk.Screens
 
 import android.annotation.SuppressLint
+import android.content.Context
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -64,6 +66,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -250,37 +253,25 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
                                             .padding(4.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        val photoUrl = rememberAsyncImagePainter(
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(product.Photo ?: "")
-                                                .size(100, 100)
-                                                .build()
-                                        ).state
-
-                                        when (photoUrl) {
-                                            is AsyncImagePainter.State.Success -> {
-                                                Image(
-                                                    painter = photoUrl.painter!!,
-                                                    contentDescription = null,
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .clip(RoundedCornerShape(8.dp)),
-                                                    contentScale = ContentScale.Crop
-                                                )
-                                            }
-
-                                            is AsyncImagePainter.State.Loading -> {
-                                                CircularProgressIndicator(modifier = Modifier.size(30.dp))
-                                            }
-
-                                            else -> {
-                                                Image(
-                                                    painter = painterResource(R.drawable.minilogogc),
-                                                    contentDescription = "Fallback Image",
-                                                    modifier = Modifier.size(50.dp)
-                                                )
+                                        val context = LocalContext.current
+                                        val imageRes = remember(product.Photo) {
+                                            try {
+                                                product.Photo?.substringBeforeLast(".")?.let { name ->
+                                                    context.resources.getIdentifier(name, "drawable", context.packageName)
+                                                } ?: R.drawable.imagezaglushka // Используем заглушку по умолчанию
+                                            } catch (e: Exception) {
+                                                R.drawable.imagezaglushka // Используем заглушку при ошибке
                                             }
                                         }
+
+                                        Image(
+                                            painter = painterResource(id = imageRes),
+                                            contentDescription = product.ProductName,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .clip(RoundedCornerShape(8.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
                                     }
 
                                     Spacer(modifier = Modifier.width(12.dp))
@@ -385,6 +376,21 @@ fun BottomNavigationBar(navController: NavController) {
                 Text("Корзина", color = Color.White, fontSize = 12.sp)
             }
         }
+
+        // Кнопка профиля пользователя
+        IconButton(
+            onClick = { navController.navigate("user_screen") },
+            modifier = Modifier.weight(1f)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Профиль",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text("Профиль", color = Color.White, fontSize = 12.sp)
+            }
+        }
     }
 }
-
