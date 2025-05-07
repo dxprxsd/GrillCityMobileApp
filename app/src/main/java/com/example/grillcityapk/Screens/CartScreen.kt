@@ -1,6 +1,7 @@
 package com.example.grillcityapk.Screens
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,6 +47,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -65,41 +66,33 @@ fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
     val clientId = viewModel.currentClientId
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(WindowInsets.statusBars.asPaddingValues())
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFA7262F))
+            .padding(WindowInsets.statusBars.asPaddingValues()), // <-- отступ от системной панели
     ) {
-        // Шапка с фоном и логотипом
-        Column(
+        // Верхний блок с логотипом и заголовком
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFC21631))
+                .height(120.dp)
+                .background(Color(0xFFA7262F))
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            // Логотип
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.minilogogc),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .height(70.dp)
-                        .width(160.dp)
-                )
-            }
-
-            // Надпись "Корзина"
             Text(
                 text = "Корзина",
-                color = Color.White,
-                fontSize = 20.sp,
+                fontSize = 33.sp,
                 fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Image(
+                painter = painterResource(id = R.drawable.minilogogc),
+                contentDescription = "Logo",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                textAlign = TextAlign.Center
+                    .height(100.dp)
+                    .width(100.dp)
             )
         }
 
@@ -107,7 +100,8 @@ fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = 56.dp)
+                .background(Color(0xFFE8E8E8), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+
         ) {
             if (cartItems.isEmpty()) {
                 Box(
@@ -138,7 +132,8 @@ fun CartScreen(navController: NavHostController, viewModel: MainViewModel) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = "Итого: ${viewModel.getCartTotal()} ₽",
@@ -189,7 +184,9 @@ fun CartItemCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        border = BorderStroke(2.dp, Color(0xFFC21631))
+
     ) {
         Row(
             modifier = Modifier

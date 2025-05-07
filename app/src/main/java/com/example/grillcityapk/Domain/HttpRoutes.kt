@@ -12,4 +12,5 @@ object HttpRoutes {
     const val ORDER_HISTORY = "$BASE_URL/orders/history"
     const val CREATE_MOBILE_ORDER = "$BASE_URL/CreateMobileOrder"
     const val ORDERS_BY_USER = "$BASE_URL/ordersByUser"
+    const val REGISTER_USER = "$BASE_URL/register"
 }

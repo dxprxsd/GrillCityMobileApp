@@ -26,6 +26,9 @@ class MainViewModel() : ViewModel() {
     var authResult = mutableStateOf("")
     private val _authResult = MutableLiveData<Boolean>()
 
+    var registrationResult = mutableStateOf("")
+    private val _registrationResult = MutableLiveData<Boolean>()
+
     var currentClientId by mutableStateOf<Int?>(null)
         private set
 
@@ -282,8 +285,41 @@ class MainViewModel() : ViewModel() {
         }
     }
 
+    fun registerUser(
+        login: String,
+        password: String,
+        surname: String,
+        firstName: String,
+        patronymic: String?,
+        phoneNumber: String
+    ) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _errorMessage.value = null
 
+                // Просто вызываем API без обработки ответа
+                apiService.registerUser(
+                    login = login,
+                    password = password,
+                    surname = surname,
+                    firstName = firstName,
+                    patronymic = patronymic,
+                    phoneNumber = phoneNumber
+                )
 
+                // Если вызов прошел без исключений, считаем успешным
+                registrationResult.value = "Success"
 
+            } catch (e: Exception) {
+                _errorMessage.value = "Ошибка сети: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
 
 }

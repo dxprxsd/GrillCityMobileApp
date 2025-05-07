@@ -12,6 +12,7 @@ import com.example.grillcityapk.Screens.CartScreen
 import com.example.grillcityapk.Screens.LoadScreen
 import com.example.grillcityapk.Screens.MainScreen
 import com.example.grillcityapk.Screens.LoginScreen
+import com.example.grillcityapk.Screens.RegistrationScreen
 import com.example.grillcityapk.Screens.UserScreen
 import com.example.grillcityapk.ui.theme.GrillCityApkTheme
 
@@ -43,6 +44,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("user_screen") {
                         UserScreen(navController = navController, viewModel = viewModel)
+                    }
+                    composable("registration_screen") {
+                        RegistrationScreen(navController = navController, viewModel = viewModel)
                     }
                 }
             }

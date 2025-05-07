@@ -18,9 +18,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -340,8 +342,9 @@ fun BottomNavigationBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .background(Color(0xFFC21631)),
+            .height(72.dp) // Увеличиваем высоту панели
+            .background(Color(0xFFC21631))
+            .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -355,9 +358,8 @@ fun BottomNavigationBar(navController: NavController) {
                     imageVector = Icons.Default.Home,
                     contentDescription = "Главная",
                     tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(32.dp) // Увеличиваем иконку
                 )
-                Text("Главная", color = Color.White, fontSize = 12.sp)
             }
         }
 
@@ -371,9 +373,8 @@ fun BottomNavigationBar(navController: NavController) {
                     imageVector = Icons.Default.ShoppingCart,
                     contentDescription = "Корзина",
                     tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(32.dp) // Увеличиваем иконку
                 )
-                Text("Корзина", color = Color.White, fontSize = 12.sp)
             }
         }
 
@@ -387,9 +388,8 @@ fun BottomNavigationBar(navController: NavController) {
                     imageVector = Icons.Default.Person,
                     contentDescription = "Профиль",
                     tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(32.dp) // Увеличиваем иконку
                 )
-                Text("Профиль", color = Color.White, fontSize = 12.sp)
             }
         }
     }

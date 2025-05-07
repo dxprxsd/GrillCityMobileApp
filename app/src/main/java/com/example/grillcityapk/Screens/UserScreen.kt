@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat
 import androidx.compose.runtime.getValue
 import com.example.grillcityapk.Models.OrderResponse
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,41 +59,31 @@ fun UserScreen(navController: NavHostController, viewModel: MainViewModel = view
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFA7262F))
             .padding(WindowInsets.statusBars.asPaddingValues())
     ) {
-        // Header with background and logo
-        Column(
+        // Верхний блок с логотипом и заголовком
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFC21631))
+                .height(120.dp)
+                .background(Color(0xFFA7262F))
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            // Logo
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.minilogogc),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .height(70.dp)
-                        .width(160.dp)
-                )
-            }
-
-            // "My Orders" text
             Text(
                 text = "Мои заказы",
-                color = Color.White,
-                fontSize = 20.sp,
+                fontSize = 33.sp,
                 fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Image(
+                painter = painterResource(id = R.drawable.minilogogc),
+                contentDescription = "Logo",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                textAlign = TextAlign.Center
+                    .height(100.dp)
+                    .width(100.dp)
             )
         }
 
@@ -100,7 +91,7 @@ fun UserScreen(navController: NavHostController, viewModel: MainViewModel = view
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = 56.dp)
+                .background(Color(0xFFE8E8E8), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
