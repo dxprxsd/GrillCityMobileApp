@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -122,7 +123,8 @@ fun RegistrationScreen(navController: NavHostController, viewModel: MainViewMode
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(8.dp))
-                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp)),
+                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp))
+                        .testTag("RegFNameField"),
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp, color = Color.Black),
                     singleLine = true
                 )
@@ -142,7 +144,8 @@ fun RegistrationScreen(navController: NavHostController, viewModel: MainViewMode
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(8.dp))
-                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp)),
+                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp))
+                        .testTag("RegSNameField"),
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp, color = Color.Black),
                     singleLine = true
                 )
@@ -162,7 +165,8 @@ fun RegistrationScreen(navController: NavHostController, viewModel: MainViewMode
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(8.dp))
-                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp)),
+                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp))
+                        .testTag("RegPatronumicField"),
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp, color = Color.Black),
                     singleLine = true
                 )
@@ -186,7 +190,8 @@ fun RegistrationScreen(navController: NavHostController, viewModel: MainViewMode
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(8.dp))
-                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp)),
+                        .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp))
+                        .testTag("RegNumberField"),
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp, color = Color.Black),
                     singleLine = true
                 )
@@ -226,6 +231,7 @@ fun RegistrationScreen(navController: NavHostController, viewModel: MainViewMode
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .testTag("RegPasswordField")
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(8.dp))
                         .border(BorderStroke(1.dp, Color(0xFFC21631)), RoundedCornerShape(8.dp)),
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp, color = Color.Black),

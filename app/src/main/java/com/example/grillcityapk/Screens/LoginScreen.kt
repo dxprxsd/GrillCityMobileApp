@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -122,7 +123,8 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel){
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
                         .fillMaxWidth()
                         .border(BorderStroke(2.dp, Color(0xFFC21631)), RoundedCornerShape(10.dp))
-                        .padding(1.dp),
+                        .padding(1.dp)
+                        .testTag("EmailField"),
                     textStyle = LocalTextStyle.current.copy(fontSize = 16.sp, color = Color.Black)
                 )
 
@@ -150,7 +152,8 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel){
                         .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
                         .fillMaxWidth()
                         .border(BorderStroke(2.dp, Color(0xFFC21631)), RoundedCornerShape(10.dp))
-                        .padding(1.dp),
+                        .padding(1.dp)
+                        .testTag("PasswordField"),
                     textStyle = LocalTextStyle.current.copy(fontSize = 16.sp, color = Color.Black)
                 )
 
