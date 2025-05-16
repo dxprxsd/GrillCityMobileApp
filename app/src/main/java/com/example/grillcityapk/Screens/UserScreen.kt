@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat
 import androidx.compose.runtime.getValue
 import com.example.grillcityapk.Models.OrderResponse
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -116,8 +117,11 @@ fun UserScreen(navController: NavHostController, viewModel: MainViewModel = view
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(items = orders, key = { it.orderId }) { order ->
-                            OrderCard(order = order)
+                        itemsIndexed(items = orders, key = { index, order -> order.orderId }) { index, order ->
+                            OrderCard(
+                                order = order,
+                                orderNumber = orders.size - index // Это даст нумерацию 1, 2, 3... где 1 - самый новый заказ
+                            )
                         }
                     }
                 }
@@ -130,7 +134,7 @@ fun UserScreen(navController: NavHostController, viewModel: MainViewModel = view
 }
 
 @Composable
-fun OrderCard(order: OrderResponse) {
+fun OrderCard(order: OrderResponse, orderNumber: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -144,7 +148,7 @@ fun OrderCard(order: OrderResponse) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Заказ #${order.orderId}",
+                    text = "Заказ #$orderNumber",
                     fontWeight = FontWeight.Bold
                 )
                 Text(

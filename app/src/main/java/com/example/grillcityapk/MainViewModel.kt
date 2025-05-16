@@ -210,8 +210,6 @@ class MainViewModel() : ViewModel() {
         }
     }
 
-
-
     // Для удаления товара
     fun removeFromCart(product: Products) {
         _cartItems.update { currentItems ->
