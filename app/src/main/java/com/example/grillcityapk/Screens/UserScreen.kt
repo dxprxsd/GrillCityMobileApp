@@ -120,7 +120,7 @@ fun UserScreen(navController: NavHostController, viewModel: MainViewModel = view
                         itemsIndexed(items = orders, key = { index, order -> order.orderId }) { index, order ->
                             OrderCard(
                                 order = order,
-                                orderNumber = orders.size - index // Это даст нумерацию 1, 2, 3... где 1 - самый новый заказ
+                                orderNumber = index + 1 // Это даст нумерацию 1, 2, 3... где 1 - самый новый заказ
                             )
                         }
                     }
